@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Security Policy Audit Dashboard</title>
+
+
+    <link rel="stylesheet"
+          href="style.css">
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- Header -->
+    <header class="header">
+
+        <div class="brand">
+            <div class="shield">◆</div>
+
+            <h1>
+                Security Policy Audit Dashboard
+            </h1>
+        </div>
+
+        <div class="subtitle">
+            Spring Boot API Authorization Analyzer
+        </div>
+
+    </header>
+
+
+    <!-- Upload Area -->
+    <section
+            id="dropZone"
+            class="upload-box">
+
+        <div class="folder-icon">
+            📁
+        </div>
+
+        <h2>
+            Drag & Drop Spring Boot Source (.zip)
+            & security-policy.yml
+        </h2>
+
+        <p>
+            Or click below to select files from your computer
+        </p>
+
+
+        <div class="upload-actions">
+
+            <label class="button source-button">
+
+                Choose Source (.zip)
+
+                <input
+                        id="projectFile"
+                        type="file"
+                        accept=".zip"
+                        hidden>
+
+            </label>
+
+
+            <label class="button policy-button">
+
+                Choose Policy (.yml)
+
+                <input
+                        id="policyFile"
+                        type="file"
+                        accept=".yml,.yaml"
+                        hidden>
+
+            </label>
+
+        </div>
+
+
+        <div class="selected-files">
+
+            <span>
+                Source:
+                <strong id="projectName">
+                    Not selected
+                </strong>
+            </span>
+
+            <span class="separator">
+                |
+            </span>
+
+            <span>
+                Policy:
+                <strong id="policyName">
+                    Not selected
+                </strong>
+            </span>
+
+        </div>
+
+
+        <button
+                id="analyzeButton"
+                class="analyze-button">
+
+            Analyze Project
+
+        </button>
+
+
+        <div
+                id="statusMessage"
+                class="status-message">
+        </div>
+
+    </section>
+
+
+    <!-- Summary -->
+    <section class="summary-grid">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                ENDPOINTS SCANNED
+            </span>
+
+            <strong
+                    id="endpointCount"
+                    class="summary-number blue">
+
+                0
+
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                TOTAL VIOLATIONS
+            </span>
+
+            <strong
+                    id="violationCount"
+                    class="summary-number red">
+
+                0
+
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                CRITICAL RISKS
+            </span>
+
+            <strong
+                    id="criticalCount"
+                    class="summary-number red">
+
+                0
+
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                HIGH / MEDIUM
+            </span>
+
+            <strong
+                    id="highMediumCount"
+                    class="summary-number orange">
+
+                0
+
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- Filter Toolbar -->
+    <section class="toolbar">
+
+        <div class="filters">
+
+            <button
+                    class="filter active"
+                    data-severity="ALL">
+                ALL
+            </button>
+
+            <button
+                    class="filter"
+                    data-severity="CRITICAL">
+                CRITICAL
+            </button>
+
+            <button
+                    class="filter"
+                    data-severity="HIGH">
+                HIGH
+            </button>
+
+            <button
+                    class="filter"
+                    data-severity="MEDIUM">
+                MEDIUM
+            </button>
+
+            <button
+                    class="filter"
+                    data-severity="LOW">
+                LOW
+            </button>
+
+        </div>
+
+
+        <input
+                id="searchInput"
+                class="search"
+                type="text"
+                placeholder="Search endpoint URI...">
+
+    </section>
+    
+    <div class="export-buttons">
+
+    <button id="exportCsvBtn">
+        Export CSV
+    </button>
+
+    <button id="exportDocxBtn">
+        Export DOCX
+    </button>
+
+</div>
+
+
+    <!-- Empty State -->
+    <div
+            id="emptyState"
+            class="empty-state">
+
+        Upload a Spring Boot project and policy file
+        to begin analysis.
+
+    </div>
+
+
+    <!-- Violations -->
+    <section
+            id="violationsContainer"
+            class="violations-container">
+    </section>
+
+</div>
+
+<div id="pagination" class="pagination"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>

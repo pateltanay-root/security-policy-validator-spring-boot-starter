@@ -1,0 +1,20 @@
+package com.research.securitypolicy.validator;
+
+public enum ViolationType {
+
+    MISSING_POLICY,
+
+    AUTHENTICATION_MISSING,
+
+    AUTHORIZATION_MISSING,
+
+    ACCESS_TYPE_MISMATCH,
+
+    ROLE_MISMATCH,
+
+    INVALID_PUBLIC_POLICY,
+
+    INVALID_AUTHENTICATED_POLICY,
+
+    UNKNOWN_ACCESS_TYPE
+}

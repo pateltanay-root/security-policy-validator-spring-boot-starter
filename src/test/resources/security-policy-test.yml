@@ -1,0 +1,45 @@
+policies:
+
+  - method: GET
+    endpoint: /api/test/public
+    access: PUBLIC
+    roles: []
+
+  - method: PUT
+    endpoint: /api/test/{id}
+    access: ROLE_BASED
+    roles:
+      - ADMIN
+      - MANAGER
+
+  - method: DELETE
+    endpoint: /api/test/{id}
+    access: ROLE_BASED
+    roles:
+      - ADMIN
+
+  - method: GET
+    endpoint: /api/test/secured
+    access: ROLE_BASED
+    roles:
+      - ADMIN
+      - MANAGER
+
+  - method: GET
+    endpoint: /api/test/roles-allowed
+    access: ROLE_BASED
+    roles:
+      - ADMIN
+      - AUDITOR
+
+  - method: GET
+    endpoint: /api/class-test/default
+    access: ROLE_BASED
+    roles:
+      - USER
+
+  - method: GET
+    endpoint: /api/class-test/admin
+    access: ROLE_BASED
+    roles:
+      - ADMIN
