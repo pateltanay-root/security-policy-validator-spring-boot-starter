@@ -75,7 +75,7 @@ Before reporting results, record:
 - raw report files and checksums;
 - exact commands and evaluation script version.
 
-See [docs/ENVIRONMENT.md](environment/ENVIRONMENT.md) and [docs/ARTIFACT_MANIFEST.md](docs/ARTIFACT_MANIFEST.md) for the recording templates.
+See [environment/ENVIRONMENT.md](environment/ENVIRONMENT.md) and [docs/ARTIFACT_MANIFEST.md](docs/ARTIFACT_MANIFEST.md) for the recording templates.
 
 ## Security and licensing
 
