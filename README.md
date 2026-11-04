@@ -44,7 +44,13 @@ These values are taken from the current root `pom.xml`. The exact Spring Securit
     └── ENVIRONMENT.md
 ```
 
-The benchmark application folders, generator, policy files, ground-truth labels, evaluation program, raw reports, and generated results should be added as they are implemented and verified. The intended layout is documented in the artifact plan; empty or planned items must not be treated as completed evidence.
+## Benchmark applications (intake reviewed)
+
+A five-application benchmark archive has been received and inspected. Its inventory and validation caveats are documented in [benchmark/README.md](benchmark/README.md), with a separate [supplied-report consistency audit](benchmark/evaluation/SUPPLIED_REPORT_AUDIT.md).
+
+The archive contains five application source ZIPs, five policies, five ground-truth files, misconfiguration notes, evaluator scripts, and supplied CSV reports. The normalized source tree and files still need to be uploaded into the `benchmark/`, `policies/`, `ground-truth/`, and `reports/` paths. The perfect agreement of supplied CSV reports with supplied ground truth is only a consistency check; it is not independently reproduced detector performance. The Hospital DOCX severity mismatch and Spring Security startup compatibility failure remain open issues.
+
+The benchmark generator/fault-injection source and clean rerun logs were not present in the upload. Do not mark those as available until they are committed and verified.
 
 ## Build and test
 
