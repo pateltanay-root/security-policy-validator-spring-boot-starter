@@ -14,79 +14,38 @@ The policy model uses three access classes:
 - `AUTHENTICATED`: endpoint requires an authenticated identity.
 - `ROLE_BASED`: endpoint requires one or more declared roles.
 
-The validator reports typed policy deviations and severity information. See [the reproducibility and artifact plan](docs/REPRODUCIBILITY_AND_ARTIFACT_PLAN.md) for the planned benchmark and evaluation package.
-
 ## Current validator build
 
-The root Maven project currently declares:
+The root Maven project declares Java 17 and Spring Boot parent 3.5.11. The exact resolved Spring Security dependency should be captured with `mvn dependency:tree` for each evaluation commit.
 
-| Component | Version/configuration |
-|---|---|
-| Java | 17 |
-| Spring Boot parent | 3.5.11 |
-| JavaParser | 3.26.4 |
-| Build | Maven |
+## Benchmark applications
 
-These values are taken from the current root `pom.xml`. The exact Spring Security dependency version should be recorded from the resolved Maven dependency tree for each reproducible experiment.
+A five-application benchmark archive has been received and inspected. Its intake details and validation caveats are documented in [benchmark/README.md](benchmark/README.md). The source ZIPs, YAML policies, ground-truth files, and supplied reports were reviewed.
 
-## Repository layout
+The corrected report parser and Hospital Spring Security compatibility change are available on the pull request branch `fix/spring-security-63-and-docx-parser`. See [the fix notes](docs/HOSPITAL_COMPATIBILITY_AND_REPORT_PARSER_FIX.md) and [the updated report consistency audit](benchmark/evaluation/SUPPLIED_REPORT_AUDIT.md).
 
-```text
-.
-├── pom.xml
-├── src/
-│   ├── main/
-│   └── test/
-├── docs/
-│   ├── ARTIFACT_MANIFEST.md
-│   └── REPRODUCIBILITY_AND_ARTIFACT_PLAN.md
-└── environment/
-    └── ENVIRONMENT.md
-```
-
-## Benchmark applications (intake reviewed)
-
-A five-application benchmark archive has been received and inspected. Its inventory and validation caveats are documented in [benchmark/README.md](benchmark/README.md), with a separate [supplied-report consistency audit](benchmark/evaluation/SUPPLIED_REPORT_AUDIT.md).
-
-The archive contains five application source ZIPs, five policies, five ground-truth files, misconfiguration notes, evaluator scripts, and supplied CSV reports. The normalized source tree and files still need to be uploaded into the `benchmark/`, `policies/`, `ground-truth/`, and `reports/` paths. The perfect agreement of supplied CSV reports with supplied ground truth is only a consistency check; it is not independently reproduced detector performance. The Hospital DOCX severity mismatch and Spring Security startup compatibility failure remain open issues.
-
-The benchmark generator/fault-injection source and clean rerun logs were not present in the upload. Do not mark those as available until they are committed and verified.
+**Important:** the supplied reports match the supplied ground-truth files after the DOCX parser correction, but this is a consistency check, not independent detector-performance validation. Fresh reports must be generated after the Hospital runtime compatibility change is rebuilt and tested.
 
 ## Build and test
 
-From the repository root, use:
+From the repository root:
 
 ```bash
 mvn clean test
 ```
 
-Record the command output and exact commit identifier for the final evaluation run. A historical test log is not a substitute for a clean run against the committed revision.
-
-## Planned research artifact
-
-The planned publication artifact includes five benchmark Spring Boot applications (Java 17; target Spring Boot 3.3.5), a generator/fault-injection component, YAML policies, ground-truth labels, an evaluation script, raw reports, metric-generation scripts, and environment details. This benchmark package is separate from the root validator project, whose current Maven parent is Spring Boot 3.5.11.
-
-The evaluation script is intended to accept JSON, CSV, and Word/DOCX reports. List a format as supported only after its parser and tests have been committed.
+Record the command output and exact commit identifier for the final evaluation run.
 
 ## Reproducibility
 
-Before reporting results, record:
+Before reporting results, record the repository commit SHA; validator and benchmark application versions; exact JDK, Maven, Spring Boot, and Spring Security versions; OS and hardware; benchmark application and policy identifiers; ground-truth labels; raw reports and checksums; and exact commands/evaluation script version.
 
-- repository commit SHA;
-- validator and benchmark application versions;
-- exact JDK, Maven, Spring Boot, and Spring Security versions;
-- OS and hardware;
-- benchmark application and policy identifiers;
-- ground-truth labels;
-- raw report files and checksums;
-- exact commands and evaluation script version.
-
-See [environment/ENVIRONMENT.md](environment/ENVIRONMENT.md) and [docs/ARTIFACT_MANIFEST.md](docs/ARTIFACT_MANIFEST.md) for the recording templates.
+See [environment/ENVIRONMENT.md](environment/ENVIRONMENT.md) and [docs/ARTIFACT_MANIFEST.md](docs/ARTIFACT_MANIFEST.md).
 
 ## Security and licensing
 
-Do not commit credentials, API keys, private tokens, personal data, or local environment files. Check the license and redistribution permissions for every third-party benchmark application before including its source code. Add a repository license only after confirming that you have the right to license all material it covers.
+Do not commit credentials, API keys, private tokens, personal data, or local environment files. Check the license and redistribution permissions for every third-party benchmark application before including its source code.
 
 ## Citation
 
-When the benchmark and evaluation artifact are finalized, cite a stable GitHub release/tag or an archived DOI in the paper. Until then, use the repository URL as a project-development link, not as evidence that every planned artifact is already available.
+When the benchmark and evaluation artifact are finalized, cite a stable GitHub release/tag or an archived DOI. Until then, use this repository as the project development location, not as evidence that every planned artifact has been independently reproduced.
