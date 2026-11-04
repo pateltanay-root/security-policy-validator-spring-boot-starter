@@ -1,6 +1,6 @@
 # Supplied Report Consistency Audit
 
-This audit compares the `security-report.csv` files provided in `Test Application.zip` with their corresponding ground-truth CSV files. It does **not** independently reproduce the validator execution.
+This audit compares the reports supplied in `Test Application.zip` with the corresponding ground-truth CSV files. It does **not** independently reproduce validator execution.
 
 ## CSV report comparison
 
@@ -13,30 +13,45 @@ This audit compares the `security-report.csv` files provided in `Test Applicatio
 | Hotel | 88 | 27 | 61 | 27 | 0 | 0 | 0 |
 | **Total** | **467** | **173** | **294** | **173** | **0** | **0** | **0** |
 
-The supplied CSV reports match the supplied ground-truth labels exactly. Under the supplied evaluator's endpoint-level binary rule, the counts are TP=173, FP=0, FN=0, TN=294. This reflects internal consistency of the submitted report and label files. It is not an independently verified performance result because the archive does not provide a reproducible, clean run trace proving how the CSV reports were generated.
+The supplied CSV reports match the supplied ground-truth labels exactly. Under the supplied endpoint-level binary rule, the aggregate counts are TP=173, FP=0, FN=0, TN=294. This is a report-to-label consistency check only, not independently verified detector performance. The archive does not provide a reproducible clean-run trace proving how every report was generated.
 
-## Hospital DOCX comparison
+## Hospital DOCX parser finding — corrected
 
-The supplied `security-report.docx` was separately parsed against the Hospital ground truth:
+The earlier 44% Hospital DOCX severity accuracy was caused by a parser field-order bug, not by a demonstrated disagreement in the DOCX content.
 
-- Findings parsed: 25
-- Violation-type accuracy: 100%
-- Severity accuracy: 44% (11 of 25)
-- Severity mismatches: 14
+The DOCX uses this order for each record:
 
-This differs from the Hospital CSV report, which matches all 25 expected violation types and severities. Investigate whether the DOCX report is an older report, a manually edited report, or a parser/input issue before treating DOCX and CSV as equivalent supported formats.
+1. `Severity: ...`
+2. `Endpoint: METHOD:/path`
+3. `Type: ...`
+4. `Message: ...`
 
-## Runtime compatibility finding
+The former parser assumed endpoint-first ordering. It therefore assigned each new record's severity to the preceding record. The corrected parser starts a new finding at each new `Severity:` field and keeps the severity with the following endpoint/type.
 
-The submitted Hospital `run.log` shows that the application started its web server but failed when the security-policy validation runner executed. The relevant call is:
+Re-running the supplied Hospital ground truth and reports with the corrected parser gives:
+
+| Hospital report | Findings parsed | TP | FP | FN | TN | Violation-type accuracy | Severity accuracy |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| DOCX, corrected parser | 25 | 25 | 0 | 0 | 26 | 100% | 100% |
+| CSV | 25 | 25 | 0 | 0 | 26 | 100% | 100% |
+
+These values show agreement between the supplied files and the supplied ground truth; they must not be presented as independently reproduced detection performance until the validator is rerun successfully and fresh reports are preserved.
+
+## Hospital runtime compatibility finding
+
+The submitted Hospital `run.log` shows that the application starts its web server but fails when the validator runner performs request-level authorization analysis.
+
+The failing call was:
 
 ```text
 RequestAuthorizationEvaluator.isGranted
   -> AuthorizationManager.authorize(Supplier, Object)
 ```
 
-The loaded `spring-security-core` class is version 6.3.4, which does not provide the method referenced by the validator class. Align the validator's compiled Spring Security API with the version resolved by the Spring Boot 3.3.5 benchmark application, then rerun the application and regenerate the report.
+The Hospital application loads `spring-security-core` 6.3.4. The validator bytecode references the newer `authorize` method, which is not available in this runtime. A compatibility patch on the branch `fix/spring-security-63-and-docx-parser` changes the evaluator to use `AuthorizationManager.check(Supplier, Object)`, returning an `AuthorizationDecision`.
+
+The patch still requires a clean Maven build/install of the validator and a fresh Hospital application startup on the target Windows/JDK/Maven environment. This environment did not contain Maven, so the Java runtime fix has not yet been end-to-end verified here.
 
 ## Publication recommendation
 
-Do not insert the perfect CSV-derived values into the paper as final detection performance yet. First regenerate all five reports from a clean checkout of the validator and benchmark projects, capture command logs and commit SHAs, resolve the Hospital DOCX/CSV discrepancy, and document the exact toolchain.
+After the compatibility patch is installed, rerun all five applications, retain fresh raw reports and startup logs, record exact commit SHAs and dependency trees, and regenerate metrics using the corrected evaluator. Do not report the supplied-file consistency values as final empirical detection performance.

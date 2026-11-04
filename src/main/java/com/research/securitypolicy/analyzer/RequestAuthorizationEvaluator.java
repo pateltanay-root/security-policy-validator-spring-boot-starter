@@ -2,6 +2,7 @@ package com.research.securitypolicy.analyzer;
 
 import java.util.function.Supplier;
 
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.web.util.ServletRequestPathUtils;
@@ -21,8 +22,7 @@ public class RequestAuthorizationEvaluator {
             );
         }
 
-        this.authorizationFilter =
-                authorizationFilter;
+        this.authorizationFilter = authorizationFilter;
     }
 
     public boolean isGranted(
@@ -43,22 +43,22 @@ public class RequestAuthorizationEvaluator {
          * Spring MVC / Spring Security normally does
          * before request matcher evaluation.
          */
-        if (!ServletRequestPathUtils
-                .hasParsedRequestPath(request)) {
-
-            ServletRequestPathUtils
-                    .parseAndCache(request);
+        if (!ServletRequestPathUtils.hasParsedRequestPath(request)) {
+            ServletRequestPathUtils.parseAndCache(request);
         }
 
-        var result =
+        /*
+         * Use AuthorizationManager.check instead of authorize.
+         * check is available in Spring Security 6.3.x, which is
+         * used by Spring Boot 3.3.x. authorize was introduced in
+         * Spring Security 6.4 and causes NoSuchMethodError when
+         * this starter runs with Spring Security 6.3.x.
+         */
+        AuthorizationDecision decision =
                 authorizationFilter
                         .getAuthorizationManager()
-                        .authorize(
-                                authenticationSupplier,
-                                request
-                        );
+                        .check(authenticationSupplier, request);
 
-        return result != null
-                && result.isGranted();
+        return decision != null && decision.isGranted();
     }
 }
